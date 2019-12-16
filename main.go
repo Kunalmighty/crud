@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -10,10 +11,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type Employee struct {
-	Id   int
-	Name string
-	City string
+type Record struct {
+	Id      int
+	Name    string
+	Type    string
+	Balance float64
 }
 
 func dbConn() (db *sql.DB) {
@@ -24,29 +26,26 @@ func dbConn() (db *sql.DB) {
 	return db
 }
 
-/*
-
 var tmpl = template.Must(template.ParseGlob("form/*"))
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
-	selDB, err := db.Query("SELECT * FROM Employee ORDER BY id DESC")
+	selDB, err := db.Query("SELECT * FROM al ORDER BY id DESC")
 	if err != nil {
 		panic(err.Error())
 	}
-	emp := Employee{}
-	res := []Employee{}
+	rec := Record{}
+	res := []Record{}
 	for selDB.Next() {
 		var id int
-		var name, city string
-		err = selDB.Scan(&id, &name, &city)
+		var name string
+		err = selDB.Scan(&id, &name)
 		if err != nil {
 			panic(err.Error())
 		}
-		emp.Id = id
-		emp.Name = name
-		emp.City = city
-		res = append(res, emp)
+		rec.Id = id
+		rec.Name = name
+		res = append(res, rec)
 	}
 	tmpl.ExecuteTemplate(w, "Index", res)
 	defer db.Close()
@@ -148,8 +147,6 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", 301)
 }
 
-*/
-
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello. This is our first Go web app on Heroku!")
 }
@@ -190,16 +187,12 @@ func main() {
 		log.Printf("Error creating table: %q \n", err)
 	}
 
-	/*
-
-		http.HandleFunc("/", Index)
-		http.HandleFunc("/show", Show)
-		http.HandleFunc("/new", New)
-		http.HandleFunc("/edit", Edit)
-		http.HandleFunc("/insert", Insert)
-		http.HandleFunc("/update", Update)
-		http.HandleFunc("/delete", Delete)
-
-	*/
+	http.HandleFunc("/", Index)
+	http.HandleFunc("/show", Show)
+	http.HandleFunc("/new", New)
+	http.HandleFunc("/edit", Edit)
+	http.HandleFunc("/insert", Insert)
+	http.HandleFunc("/update", Update)
+	http.HandleFunc("/delete", Delete)
 
 }
