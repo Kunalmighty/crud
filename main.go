@@ -134,7 +134,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		name := r.FormValue("name")
 		typeo := r.FormValue("type")
 		balance := r.FormValue("balance")
-		id := r.FormValue("id")
+		id := r.FormValue("uid")
 		insForm, err := db.Prepare("UPDATE al SET name=$1, asslia=$2, balance=$3 WHERE id=$4")
 		if err != nil {
 			panic(err.Error())
