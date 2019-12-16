@@ -114,15 +114,15 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 func Insert(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	if r.Method == "POST" {
-		name := r.FormValue("name")
-		typeo := r.FormValue("type")
-		balance := r.FormValue("balance")
-		insForm, err := db.Prepare("INSERT INTO al(name, asslia, balance) VALUES(?,?,?)")
+		nameo := r.FormValue("name")
+		typeo := r.FormValue("asslia")
+		balanceo := r.FormValue("balance")
+		insForm, err := db.Prepare("INSERT INTO al(name, asslia, balance) VALUES(nameo,typeo,balanceo)")
 		if err != nil {
 			panic(err.Error())
 		}
-		insForm.Exec(name, typeo, balance)
-		log.Println("INSERT: Name: " + name + " | Type: " + typeo)
+		insForm.Exec(nameo, typeo, balanceo)
+		log.Println("INSERT: Name: " + nameo + " | Type: " + typeo)
 	}
 	defer db.Close()
 	http.Redirect(w, r, "/", 301)
