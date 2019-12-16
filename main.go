@@ -15,13 +15,13 @@ type Record struct {
 	Id      int
 	Name    string
 	Type    string
-	Balance uint64
+	Balance int64
 }
 
 type Totals struct {
-	Worth       uint64
-	Assets      uint64
-	Liabilities uint64
+	Worth       int64
+	Assets      int64
+	Liabilities int64
 }
 
 func dbConn() (db *sql.DB) {
@@ -46,7 +46,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		var id int
 		var name string
 		var asslia string
-		var balance uint64
+		var balance int64
 		err = selDB.Scan(&id, &asslia, &balance, &name)
 		if err != nil {
 			panic(err.Error())
@@ -73,7 +73,7 @@ func Show(w http.ResponseWriter, r *http.Request) {
 		var id int
 		var name string
 		var asslia string
-		var balance uint64
+		var balance int64
 		err = selDB.Scan(&id, &asslia, &balance, &name)
 		if err != nil {
 			panic(err.Error())
@@ -102,15 +102,15 @@ func Show2(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
-	var worth uint64
+	var worth int64
 	for welDB.Next() {
 		welDB.Scan(&worth)
 	}
-	var assets uint64
+	var assets int64
 	for selDB.Next() {
 		selDB.Scan(&assets)
 	}
-	var liabilities uint64
+	var liabilities int64
 	for lelDB.Next() {
 		lelDB.Scan(&liabilities)
 	}
@@ -138,7 +138,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 		var id int
 		var name string
 		var asslia string
-		var balance uint64
+		var balance int64
 		err = selDB.Scan(&id, &asslia, &balance, &name)
 		if err != nil {
 			panic(err.Error())
