@@ -1,0 +1,4 @@
+# github.com/lib/pq v1.2.1-0.20191211044110-99274577be97
+github.com/lib/pq
+github.com/lib/pq/oid
+github.com/lib/pq/scram

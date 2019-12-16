@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,8 +16,6 @@ type Employee struct {
 	City string
 }
 
-/*
-
 func dbConn() (db *sql.DB) {
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -24,6 +23,8 @@ func dbConn() (db *sql.DB) {
 	}
 	return db
 }
+
+/*
 
 var tmpl = template.Must(template.ParseGlob("form/*"))
 
@@ -172,10 +173,13 @@ func main() {
 		log.Fatal("ListenAndServe: ", err)
 	}
 
-	/*
+	db := dbConn()
+	_, err2 := db.Exec("CREATE TABLE IF NOT EXISTS employee(id int, name varchar, city varchar)")
+	if err2 != nil {
+		log.Printf("Error creating table: %q \n", err)
+	}
 
-		db := dbConn()
-		_, err2 := db.Exec("CREATE TABLE IF NOT EXISTS employee(id int, name varchar, city varchar)")
+	/*
 
 		http.HandleFunc("/", Index)
 		http.HandleFunc("/show", Show)
