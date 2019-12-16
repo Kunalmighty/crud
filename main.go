@@ -47,7 +47,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		}
 		rec.Id = id
 		rec.Name = name
-		rec.Type = typeo
+		rec.Type = asslia
 		rec.Balance = balance
 		res = append(res, rec)
 	}
