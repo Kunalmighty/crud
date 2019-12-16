@@ -39,9 +39,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	for selDB.Next() {
 		var id int
 		var name string
-		var typeo string
+		var asslia string
 		var balance float64
-		err = selDB.Scan(&id, &name, &typeo, &balance)
+		err = selDB.Scan(&id, &asslia, &balance, &name)
 		if err != nil {
 			panic(err.Error())
 		}
