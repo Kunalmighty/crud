@@ -117,7 +117,7 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 		nameo := r.FormValue("name")
 		typeo := r.FormValue("asslia")
 		balanceo := r.FormValue("balance")
-		insForm, err := db.Prepare("INSERT INTO al(name, asslia, balance) VALUES(nameo,typeo,balanceo)")
+		insForm, err := db.Prepare("INSERT INTO al(name, asslia, balance) VALUES(?,?,?)")
 		if err != nil {
 			panic(err.Error())
 		}
