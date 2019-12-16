@@ -174,8 +174,19 @@ func main() {
 	}
 
 	db := dbConn()
-	_, err2 := db.Exec("CREATE TABLE IF NOT EXISTS employee(id int, name varchar, city varchar)")
-	if err2 != nil {
+	_, err = db.Exec(`CREATE TYPE types AS ENUM ('asset', 'liability');`)
+	if err != nil {
+		log.Printf("Error creating type enum: %q \n", err)
+	}
+	_, err = db.Exec(`
+    CREATE TABLE IF NOT EXISTS al (
+	  id SERIAL,
+	  asslia TYPES,
+	  balance MONEY,
+	  name VARCHAR(64) NOT NULL UNIQUE,
+      CHECK (CHAR_LENGTH(TRIM(name)) > 0)
+    );`)
+	if err != nil {
 		log.Printf("Error creating table: %q \n", err)
 	}
 
