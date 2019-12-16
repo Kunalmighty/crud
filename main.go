@@ -117,7 +117,7 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 		name := r.FormValue("name")
 		typeo := r.FormValue("type")
 		balance := r.FormValue("balance")
-		insForm, err := db.Prepare("INSERT INTO al(name, typeo, balance) VALUES(?,?,?)")
+		insForm, err := db.Prepare("INSERT INTO al(name, asslia, balance) VALUES(?,?,?)")
 		if err != nil {
 			panic(err.Error())
 		}
@@ -135,7 +135,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		typeo := r.FormValue("type")
 		balance := r.FormValue("balance")
 		id := r.FormValue("id")
-		insForm, err := db.Prepare("UPDATE al SET name=?, type=?. balance=? WHERE id=?")
+		insForm, err := db.Prepare("UPDATE al SET name=?, asslia=?. balance=? WHERE id=?")
 		if err != nil {
 			panic(err.Error())
 		}
