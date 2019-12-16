@@ -15,7 +15,7 @@ type Record struct {
 	Id      int
 	Name    string
 	Type    string
-	Balance []uint8
+	Balance uint64
 }
 
 func dbConn() (db *sql.DB) {
@@ -40,7 +40,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		var id int
 		var name string
 		var asslia string
-		var balance []uint8
+		var balance uint64
 		err = selDB.Scan(&id, &asslia, &balance, &name)
 		if err != nil {
 			panic(err.Error())
@@ -67,7 +67,7 @@ func Show(w http.ResponseWriter, r *http.Request) {
 		var id int
 		var name string
 		var asslia string
-		var balance []uint8
+		var balance uint64
 		err = selDB.Scan(&id, &asslia, &balance, &name)
 		if err != nil {
 			panic(err.Error())
@@ -97,7 +97,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 		var id int
 		var name string
 		var asslia string
-		var balance []uint8
+		var balance uint64
 		err = selDB.Scan(&id, &asslia, &balance, &name)
 		if err != nil {
 			panic(err.Error())
