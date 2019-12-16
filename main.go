@@ -175,8 +175,14 @@ func GetPort() string {
 
 func main() {
 
-	//http.HandleFunc("/", handler)
 	http.HandleFunc("/", Index)
+	http.HandleFunc("/show", Show)
+	http.HandleFunc("/new", New)
+	http.HandleFunc("/edit", Edit)
+	http.HandleFunc("/insert", Insert)
+	http.HandleFunc("/update", Update)
+	http.HandleFunc("/delete", Delete)
+
 	fmt.Println("listening...")
 	err := http.ListenAndServe(GetPort(), nil)
 	if err != nil {
@@ -202,12 +208,5 @@ func main() {
 				log.Printf("Error creating table: %q \n", err)
 			}
 	*/
-
-	http.HandleFunc("/show", Show)
-	http.HandleFunc("/new", New)
-	http.HandleFunc("/edit", Edit)
-	http.HandleFunc("/insert", Insert)
-	http.HandleFunc("/update", Update)
-	http.HandleFunc("/delete", Delete)
 
 }
