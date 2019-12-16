@@ -39,12 +39,16 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	for selDB.Next() {
 		var id int
 		var name string
-		err = selDB.Scan(&id, &name)
+		var typeo string
+		var balance float64
+		err = selDB.Scan(&id, &name, &typeo, &balance)
 		if err != nil {
 			panic(err.Error())
 		}
 		rec.Id = id
 		rec.Name = name
+		rec.Type = typeo
+		rec.Balance = balance
 		res = append(res, rec)
 	}
 	tmpl.ExecuteTemplate(w, "Index", res)
@@ -54,23 +58,26 @@ func Index(w http.ResponseWriter, r *http.Request) {
 func Show(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	nId := r.URL.Query().Get("id")
-	selDB, err := db.Query("SELECT * FROM Employee WHERE id=?", nId)
+	selDB, err := db.Query("SELECT * FROM al WHERE id=?", nId)
 	if err != nil {
 		panic(err.Error())
 	}
-	emp := Employee{}
+	rec := Record{}
 	for selDB.Next() {
 		var id int
-		var name, city string
-		err = selDB.Scan(&id, &name, &city)
+		var name string
+		var typeo string
+		var balance float64
+		err = selDB.Scan(&id, &name, &typeo, &balance)
 		if err != nil {
 			panic(err.Error())
 		}
-		emp.Id = id
-		emp.Name = name
-		emp.City = city
+		rec.Id = id
+		rec.Name = name
+		rec.Type = typeo
+		rec.Balance = balance
 	}
-	tmpl.ExecuteTemplate(w, "Show", emp)
+	tmpl.ExecuteTemplate(w, "Show", rec)
 	defer db.Close()
 }
 
@@ -81,23 +88,26 @@ func New(w http.ResponseWriter, r *http.Request) {
 func Edit(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	nId := r.URL.Query().Get("id")
-	selDB, err := db.Query("SELECT * FROM Employee WHERE id=?", nId)
+	selDB, err := db.Query("SELECT * FROM al WHERE id=?", nId)
 	if err != nil {
 		panic(err.Error())
 	}
-	emp := Employee{}
+	rec := Record{}
 	for selDB.Next() {
 		var id int
-		var name, city string
-		err = selDB.Scan(&id, &name, &city)
+		var name string
+		var typeo string
+		var balance float64
+		err = selDB.Scan(&id, &name, &typeo, &balance)
 		if err != nil {
 			panic(err.Error())
 		}
-		emp.Id = id
-		emp.Name = name
-		emp.City = city
+		rec.Id = id
+		rec.Name = name
+		rec.Type = typeo
+		rec.Balance = balance
 	}
-	tmpl.ExecuteTemplate(w, "Edit", emp)
+	tmpl.ExecuteTemplate(w, "Edit", rec)
 	defer db.Close()
 }
 
@@ -105,13 +115,14 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	if r.Method == "POST" {
 		name := r.FormValue("name")
-		city := r.FormValue("city")
-		insForm, err := db.Prepare("INSERT INTO Employee(name, city) VALUES(?,?)")
+		typeo := r.FormValue("type")
+		balance := r.FormValue("balance")
+		insForm, err := db.Prepare("INSERT INTO al(name, typeo, balance) VALUES(?,?,?);")
 		if err != nil {
 			panic(err.Error())
 		}
-		insForm.Exec(name, city)
-		log.Println("INSERT: Name: " + name + " | City: " + city)
+		insForm.Exec(name, typeo, balance)
+		log.Println("INSERT: Name: " + name + " | Type: " + typeo)
 	}
 	defer db.Close()
 	http.Redirect(w, r, "/", 301)
@@ -121,14 +132,15 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	if r.Method == "POST" {
 		name := r.FormValue("name")
-		city := r.FormValue("city")
-		id := r.FormValue("uid")
-		insForm, err := db.Prepare("UPDATE Employee SET name=?, city=? WHERE id=?")
+		typeo := r.FormValue("type")
+		balance := r.FormValue("balance")
+		id := r.FormValue("id")
+		insForm, err := db.Prepare("UPDATE al SET name=?, type=?. balance=? WHERE id=?")
 		if err != nil {
 			panic(err.Error())
 		}
-		insForm.Exec(name, city, id)
-		log.Println("UPDATE: Name: " + name + " | City: " + city)
+		insForm.Exec(name, typeo, balance, id)
+		log.Println("UPDATE: Name: " + name + " | Type: " + typeo)
 	}
 	defer db.Close()
 	http.Redirect(w, r, "/", 301)
@@ -136,12 +148,12 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
-	emp := r.URL.Query().Get("id")
-	delForm, err := db.Prepare("DELETE FROM Employee WHERE id=?")
+	rec := r.URL.Query().Get("id")
+	delForm, err := db.Prepare("DELETE FROM al WHERE id=?")
 	if err != nil {
 		panic(err.Error())
 	}
-	delForm.Exec(emp)
+	delForm.Exec(rec)
 	log.Println("DELETE")
 	defer db.Close()
 	http.Redirect(w, r, "/", 301)
@@ -163,7 +175,8 @@ func GetPort() string {
 
 func main() {
 
-	http.HandleFunc("/", handler)
+	//http.HandleFunc("/", handler)
+	http.HandleFunc("/", Index)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(GetPort(), nil)
 	if err != nil {
@@ -175,19 +188,21 @@ func main() {
 	if err != nil {
 		log.Printf("Error creating type enum: %q \n", err)
 	}
-	_, err = db.Exec(`
-    CREATE TABLE IF NOT EXISTS al (
-	  id SERIAL,
-	  asslia TYPES,
-	  balance MONEY,
-	  name VARCHAR(64) NOT NULL UNIQUE,
-      CHECK (CHAR_LENGTH(TRIM(name)) > 0)
-    );`)
-	if err != nil {
-		log.Printf("Error creating table: %q \n", err)
-	}
 
-	http.HandleFunc("/", Index)
+	/*
+			_, err = db.Exec(`
+		    CREATE TABLE IF NOT EXISTS al (
+			  id SERIAL,
+			  asslia TYPES,
+			  balance MONEY,
+			  name VARCHAR(64) NOT NULL UNIQUE,
+		      CHECK (CHAR_LENGTH(TRIM(name)) > 0)
+		    );`)
+			if err != nil {
+				log.Printf("Error creating table: %q \n", err)
+			}
+	*/
+
 	http.HandleFunc("/show", Show)
 	http.HandleFunc("/new", New)
 	http.HandleFunc("/edit", Edit)
