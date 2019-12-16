@@ -1,0 +1,9 @@
+{{ define "Show2" }}
+  {{ template "Header" }}
+    {{ template "Menu"  }}
+    <h2> Totals </h2>
+      <p>Net Worth: {{ .Worth }}</p>
+      <p>Assets: {{ .Assets }}</p>
+      <p>Liabilities:  {{ .Liabilities }}</p>
+  {{ template "Footer" }}
+{{ end }}

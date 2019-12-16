@@ -18,6 +18,12 @@ type Record struct {
 	Balance uint64
 }
 
+type Totals struct {
+	Worth       uint64
+	Assets      uint64
+	Liabilities uint64
+}
+
 func dbConn() (db *sql.DB) {
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -78,6 +84,41 @@ func Show(w http.ResponseWriter, r *http.Request) {
 		rec.Balance = balance
 	}
 	tmpl.ExecuteTemplate(w, "Show", rec)
+	defer db.Close()
+}
+
+func Show2(w http.ResponseWriter, r *http.Request) {
+	db := dbConn()
+	tot := Totals{}
+	welDB, err := db.Query("SELECT SUM(balance) AS wtotal FROM al")
+	if err != nil {
+		panic(err.Error())
+	}
+	selDB, err := db.Query("SELECT SUM(balance) AS atotal FROM al WHERE asslia = 'asset'")
+	if err != nil {
+		panic(err.Error())
+	}
+	lelDB, err := db.Query("SELECT SUM(balance) AS ltotal FROM al WHERE asslia = 'liability'")
+	if err != nil {
+		panic(err.Error())
+	}
+	var worth uint64
+	for welDB.Next() {
+		welDB.Scan(&worth)
+	}
+	var assets uint64
+	for selDB.Next() {
+		selDB.Scan(&assets)
+	}
+	var liabilities uint64
+	for lelDB.Next() {
+		lelDB.Scan(&liabilities)
+	}
+	tot.Worth = worth
+	tot.Assets = assets
+	tot.Liabilities = liabilities
+
+	tmpl.ExecuteTemplate(w, "Show2", tot)
 	defer db.Close()
 }
 
@@ -182,6 +223,7 @@ func main() {
 	http.HandleFunc("/insert", Insert)
 	http.HandleFunc("/update", Update)
 	http.HandleFunc("/delete", Delete)
+	http.HandleFunc("/show2", Show2)
 
 	fmt.Println("listening...")
 	err := http.ListenAndServe(GetPort(), nil)
