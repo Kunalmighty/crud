@@ -1,1 +1,1 @@
-web: bin/crud
+web: crud
