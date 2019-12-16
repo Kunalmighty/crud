@@ -58,7 +58,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 func Show(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	nId := r.URL.Query().Get("id")
-	selDB, err := db.Query("SELECT * FROM al WHERE id=?", nId)
+	selDB, err := db.Query("SELECT * FROM al WHERE id= $1", nId)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -66,15 +66,15 @@ func Show(w http.ResponseWriter, r *http.Request) {
 	for selDB.Next() {
 		var id int
 		var name string
-		var typeo string
+		var asslia string
 		var balance []uint8
-		err = selDB.Scan(&id, &name, &typeo, &balance)
+		err = selDB.Scan(&id, &asslia, &balance, &name)
 		if err != nil {
 			panic(err.Error())
 		}
 		rec.Id = id
 		rec.Name = name
-		rec.Type = typeo
+		rec.Type = asslia
 		rec.Balance = balance
 	}
 	tmpl.ExecuteTemplate(w, "Show", rec)
@@ -88,7 +88,7 @@ func New(w http.ResponseWriter, r *http.Request) {
 func Edit(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	nId := r.URL.Query().Get("id")
-	selDB, err := db.Query("SELECT * FROM al WHERE id=?", nId)
+	selDB, err := db.Query("SELECT * FROM al WHERE id=$1", nId)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -96,15 +96,15 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 	for selDB.Next() {
 		var id int
 		var name string
-		var typeo string
+		var asslia string
 		var balance []uint8
-		err = selDB.Scan(&id, &name, &typeo, &balance)
+		err = selDB.Scan(&id, &asslia, &balance, &name)
 		if err != nil {
 			panic(err.Error())
 		}
 		rec.Id = id
 		rec.Name = name
-		rec.Type = typeo
+		rec.Type = asslia
 		rec.Balance = balance
 	}
 	tmpl.ExecuteTemplate(w, "Edit", rec)
@@ -135,7 +135,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		typeo := r.FormValue("type")
 		balance := r.FormValue("balance")
 		id := r.FormValue("id")
-		insForm, err := db.Prepare("UPDATE al SET name=?, asslia=?. balance=? WHERE id=?")
+		insForm, err := db.Prepare("UPDATE al SET name=$1, asslia=$2, balance=$3 WHERE id=$4")
 		if err != nil {
 			panic(err.Error())
 		}
@@ -149,7 +149,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 func Delete(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	rec := r.URL.Query().Get("id")
-	delForm, err := db.Prepare("DELETE FROM al WHERE id=?")
+	delForm, err := db.Prepare("DELETE FROM al WHERE id=$1")
 	if err != nil {
 		panic(err.Error())
 	}
