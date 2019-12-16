@@ -132,7 +132,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	if r.Method == "POST" {
 		name := r.FormValue("name")
-		typeo := r.FormValue("type")
+		typeo := r.FormValue("asslia")
 		balance := r.FormValue("balance")
 		id := r.FormValue("uid")
 		insForm, err := db.Prepare("UPDATE al SET name=$1, asslia=$2, balance=$3 WHERE id=$4")
