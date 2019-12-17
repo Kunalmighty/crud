@@ -90,10 +90,7 @@ func Show(w http.ResponseWriter, r *http.Request) {
 func Show2(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	tot := Totals{}
-	welDB, err := db.Query("SELECT SUM(balance) AS wtotal FROM al")
-	if err != nil {
-		panic(err.Error())
-	}
+
 	selDB, err := db.Query("SELECT SUM(balance) AS atotal FROM al WHERE asslia = 'asset'")
 	if err != nil {
 		panic(err.Error())
@@ -102,10 +99,7 @@ func Show2(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
-	var worth int64
-	for welDB.Next() {
-		welDB.Scan(&worth)
-	}
+
 	var assets int64
 	for selDB.Next() {
 		selDB.Scan(&assets)
@@ -114,7 +108,7 @@ func Show2(w http.ResponseWriter, r *http.Request) {
 	for lelDB.Next() {
 		lelDB.Scan(&liabilities)
 	}
-	tot.Worth = worth
+	tot.Worth = assets - liabilities
 	tot.Assets = assets
 	tot.Liabilities = liabilities
 
