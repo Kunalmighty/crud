@@ -24,6 +24,11 @@ type Totals struct {
 	Liabilities int64
 }
 
+/**
+* Connect to the database
+* @param none
+* @return pointer to database
+ */
 func dbConn() (db *sql.DB) {
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -32,8 +37,14 @@ func dbConn() (db *sql.DB) {
 	return db
 }
 
+//Template variable initialization
 var tmpl = template.Must(template.ParseGlob("form/*"))
 
+/**
+* Delivers the table contents to be displayed
+* @param HTTP interfaces
+* @return none
+ */
 func Index(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	selDB, err := db.Query("SELECT * FROM al ORDER BY id DESC")
@@ -61,6 +72,11 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 }
 
+/**
+* Delivers the table row to be displayed
+* @param HTTP interfaces
+* @return none
+ */
 func Show(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	nId := r.URL.Query().Get("id")
@@ -87,6 +103,11 @@ func Show(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 }
 
+/**
+* Delivers the table totals to be displayed
+* @param HTTP interfaces
+* @return none
+ */
 func Show2(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	tot := Totals{}
@@ -116,10 +137,20 @@ func Show2(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 }
 
+/**
+* Works with the Insert function and New.tmpl to insert new row in table
+* @param HTTP interfaces
+* @return none
+ */
 func New(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "New", nil)
 }
 
+/**
+* Works with the Update function and Edit.tmpl to edit a table entry
+* @param HTTP interfaces
+* @return none
+ */
 func Edit(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	nId := r.URL.Query().Get("id")
@@ -146,6 +177,11 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 }
 
+/**
+* Works with the New function and New.tmpl to insert new row in table
+* @param HTTP interfaces
+* @return none
+ */
 func Insert(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	if r.Method == "POST" {
@@ -163,6 +199,11 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", 301)
 }
 
+/**
+* Works with the Edit function and Edit.tmpl to edit a table entry
+* @param HTTP interfaces
+* @return none
+ */
 func Update(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	if r.Method == "POST" {
@@ -181,6 +222,11 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", 301)
 }
 
+/**
+* Delete a row from table, as selected through Index.tmpl
+* @param HTTP interfaces
+* @return none
+ */
 func Delete(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	rec := r.URL.Query().Get("name")
@@ -194,10 +240,11 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", 301)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello. This is our first Go web app on Heroku!")
-}
-
+/**
+* Get Heroku port
+* @param none
+* @return port string
+ */
 func GetPort() string {
 	var port = os.Getenv("PORT")
 	// Set a default port if there is nothing in the environment
@@ -224,25 +271,5 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
-
-	db := dbConn()
-	_, err = db.Exec(`CREATE TYPE types AS ENUM ('asset', 'liability');`)
-	if err != nil {
-		log.Printf("Error creating type enum: %q \n", err)
-	}
-
-	/*
-			_, err = db.Exec(`
-		    CREATE TABLE IF NOT EXISTS al (
-			  id SERIAL,
-			  asslia TYPES,
-			  balance MONEY,
-			  name VARCHAR(64) NOT NULL UNIQUE,
-		      CHECK (CHAR_LENGTH(TRIM(name)) > 0)
-		    );`)
-			if err != nil {
-				log.Printf("Error creating table: %q \n", err)
-			}
-	*/
 
 }
