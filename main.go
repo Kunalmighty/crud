@@ -183,7 +183,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
-	rec := r.URL.Query().Get("id")
+	rec := r.URL.Query().Get("name")
 	delForm, err := db.Prepare("DELETE FROM al WHERE id=$1")
 	if err != nil {
 		panic(err.Error())
